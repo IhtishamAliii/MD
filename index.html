@@ -1,114 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Editor</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --background-color: #ecf0f1;
-            --text-color: #34495e;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            text-align: center;
-            padding: 1rem;
-        }
-        .toolbar {
-            position: sticky;
-            top: 0;
-            background-color: var(--secondary-color);
-            padding: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            z-index: 1000;
-        }
-        button {
-            padding: 0.5rem 1rem;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2c3e50;
+        --background-color: #ecf0f1;
+        --text-color: #34495e;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    header {
+        background-color: var(--primary-color);
+        color: white;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .toolbar {
+        position: sticky;
+        top: 0;
+        background-color: var(--secondary-color);
+        padding: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        z-index: 1000;
+    }
+
+    button {
+        padding: 0.5rem 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    main {
+        display: flex;
+        flex: 1;
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
+        flex: 1;
+        border: none;
+        border-radius: 4px;
+        padding: 10px;
+        font-size: 14px;
+        resize: none;
+    }
+
+    .heart {
+        color: #e74c3c;
+    }
+
+    #preview {
+        padding: 1rem;
+        overflow-y: auto;
+    }
+
+    #preview table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    #preview th,
+    #preview td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    #preview th {
+        background-color: #f2f2f2;
+    }
+
+    #save-status {
+        margin-left: auto;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
         main {
-            display: flex;
-            flex: 1;
-            padding: 1rem;
-            gap: 1rem;
-        }
-        .column {
-            flex: 1;
-            display: flex;
             flex-direction: column;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        textarea {
-            flex: 1;
-            border: none;
-            border-radius: 4px;
-            padding: 10px;
-            font-size: 14px;
-            resize: none;
+
+        .column {
+            margin-bottom: 1rem;
         }
-        .heart {
-            color: #e74c3c;
-        }
-        #preview {
-            padding: 1rem;
-            overflow-y: auto;
-        }
-        #preview table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        #preview th, #preview td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        #preview th {
-            background-color: #f2f2f2;
-        }
-        #save-status {
-            margin-left: auto;
-            color: white;
-        }
-        @media (max-width: 768px) {
-            main {
-                flex-direction: column;
-            }
-            .column {
-                margin-bottom: 1rem;
-            }
-        }
-        .me {
-            font-size: 14px;
-            font-family: monospace;
-        }
+    }
+
+    .me {
+        font-size: 14px;
+        font-family: monospace;
+    }
     </style>
 </head>
+
 <body>
     <header>
         <h1>Markdown Editor</h1>
@@ -119,8 +139,9 @@
         <button onclick="performRedo()">Redo</button>
         <button onclick="applyFormat('**')">Bold</button>
         <button onclick="applyFormat('*')">Italic</button>
-        <button onclick="applyFormat('__')">Underline</button>
+        <button onclick="applyUnderline('<u>')">Underline</button>
         <button onclick="applyFormat('~~')">Strikethrough</button>
+        <button onclick="applyHighlight('')">Highlight</button>
         <button onclick="insertLink()">Hyperlink</button>
         <button onclick="insertImage()">Image</button>
         <button onclick="insertList('- ')">Unordered List</button>
@@ -139,155 +160,198 @@
         </div>
         <div id="preview" class="column"></div>
     </main>
-
     <script>
-        const textarea = document.getElementById('markdown-input');
-        const preview = document.getElementById('preview');
-        const saveStatus = document.getElementById('save-status');
-        let undoStack = [''];
-        let redoStack = [];
-        let autoSaveTimeout;
+    const textarea = document.getElementById('markdown-input');
+    const preview = document.getElementById('preview');
+    const saveStatus = document.getElementById('save-status');
+    let undoStack = [''];
+    let redoStack = [];
+    let autoSaveTimeout;
 
-        marked.setOptions({
-            gfm: true,
-            breaks: true,
-            tables: true
-        });
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+        tables: true
+    });
 
-        function updatePreview() {
-            preview.innerHTML = marked.parse(textarea.value);
-            saveState();
-            scheduleAutoSave();
+    function updatePreview() {
+        preview.innerHTML = marked.parse(textarea.value);
+        saveState();
+        scheduleAutoSave();
+    }
+
+    function applyUnderline(format) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const before = text.substring(0, start);
+        const selection = text.substring(start, end);
+        const after = text.substring(end);
+
+        let newText;
+        if (selection) {
+            newText = before + "<u>" + selection + "</u>" + after;
+        } else {
+            newText = before + "<u>" + "</u>" + after;
         }
 
-        function applyFormat(format) {
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            const before = text.substring(0, start);
-            const selection = text.substring(start, end);
-            const after = text.substring(end);
+        textarea.value = newText;
+        textarea.focus();
+        textarea.setSelectionRange(start + format.length, end + format.length);
+        updatePreview();
+    }
 
-            let newText;
-            if (selection) {
-                newText = before + format + selection + format + after;
-            } else {
-                newText = before + format + format + after;
-            }
+    function applyHighlight(format) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const before = text.substring(0, start);
+        const selection = text.substring(start, end);
+        const after = text.substring(end);
 
-            textarea.value = newText;
-            textarea.focus();
-            textarea.setSelectionRange(start + format.length, end + format.length);
-            updatePreview();
+        let newText;
+        if (selection) {
+            newText = before + "<mark>" + selection + "</mark>" + after;
+        } else {
+            newText = before + "<mark>" + "</mark>" + after;
         }
 
-        function insertLink() {
-            const url = prompt('Enter the URL:', 'https://');
-            if (url) applyFormat('[', '](' + url + ')');
+        textarea.value = newText;
+        textarea.focus();
+        textarea.setSelectionRange(start + format.length, end + format.length);
+        updatePreview();
+    }
+
+
+    function applyFormat(format) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const before = text.substring(0, start);
+        const selection = text.substring(start, end);
+        const after = text.substring(end);
+
+        let newText;
+        if (selection) {
+            newText = before + format + selection + format + after;
+        } else {
+            newText = before + format + format + after;
         }
 
-        function insertImage() {
-            const url = prompt('Enter the image URL:', 'https://');
-            if (url) {
-                const alt = prompt('Enter alt text:', 'Image description');
-                const imageMarkdown = `![${alt}](${url})`;
-                insertAtCursor(imageMarkdown);
-            }
-        }
+        textarea.value = newText;
+        textarea.focus();
+        textarea.setSelectionRange(start + format.length, end + format.length);
+        updatePreview();
+    }
 
-        function insertList(prefix) {
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            const before = text.substring(0, start);
-            const selection = text.substring(start, end);
-            const after = text.substring(end);
-            const lines = selection ? selection.split('\n').map(line => prefix + line).join('\n') : prefix;
-            textarea.value = before + lines + after;
-            updatePreview();
-        }
+    function insertLink() {
+        const url = prompt('Enter the URL:', 'https://');
+        if (url) applyFormat('[', '](' + url + ')');
+    }
 
-        function insertCodeBlock() {
-            applyFormat('```\n', '\n```');
+    function insertImage() {
+        const url = prompt('Enter the image URL:', 'https://');
+        if (url) {
+            const alt = prompt('Enter alt text:', 'Image description');
+            const imageMarkdown = `![${alt}](${url})`;
+            insertAtCursor(imageMarkdown);
         }
+    }
 
-        function insertTable() {
-            const tableTemplate = `
+    function insertList(prefix) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const before = text.substring(0, start);
+        const selection = text.substring(start, end);
+        const after = text.substring(end);
+        const lines = selection ? selection.split('\n').map(line => prefix + line).join('\n') : prefix;
+        textarea.value = before + lines + after;
+        updatePreview();
+    }
+
+    function insertCodeBlock() {
+        applyFormat('```\n', '\n```');
+    }
+
+    function insertTable() {
+        const tableTemplate = `
 | Header 1 | Header 2 | Header 3 |
 |----------|----------|----------|
 | Row 1, Col 1 | Row 1, Col 2 | Row 1, Col 3 |
 | Row 2, Col 1 | Row 2, Col 2 | Row 2, Col 3 |
 `;
-            insertAtCursor(tableTemplate);
-        }
+        insertAtCursor(tableTemplate);
+    }
 
-        function insertHorizontalRule() {
-            insertAtCursor('\n---\n');
-        }
+    function insertHorizontalRule() {
+        insertAtCursor('\n---\n');
+    }
 
-        function insertAtCursor(text) {
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
-            textarea.focus();
-            textarea.setSelectionRange(start + text.length, start + text.length);
+    function insertAtCursor(text) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+        textarea.focus();
+        textarea.setSelectionRange(start + text.length, start + text.length);
+        updatePreview();
+    }
+
+    function saveState() {
+        if (undoStack[undoStack.length - 1] !== textarea.value) {
+            undoStack.push(textarea.value);
+            redoStack = [];
+        }
+    }
+
+    function performUndo() {
+        if (undoStack.length > 1) {
+            redoStack.push(undoStack.pop());
+            textarea.value = undoStack[undoStack.length - 1];
             updatePreview();
         }
+    }
 
-        function saveState() {
-            if (undoStack[undoStack.length - 1] !== textarea.value) {
-                undoStack.push(textarea.value);
-                redoStack = [];
-            }
+    function performRedo() {
+        if (redoStack.length > 0) {
+            undoStack.push(redoStack.pop());
+            textarea.value = undoStack[undoStack.length - 1];
+            updatePreview();
         }
+    }
 
-        function performUndo() {
-            if (undoStack.length > 1) {
-                redoStack.push(undoStack.pop());
-                textarea.value = undoStack[undoStack.length - 1];
-                updatePreview();
-            }
+    function saveContent() {
+        localStorage.setItem('markdownContent', textarea.value);
+        showSaveStatus('Content saved!');
+    }
+
+    function loadContent() {
+        const savedContent = localStorage.getItem('markdownContent');
+        if (savedContent) {
+            textarea.value = savedContent;
+            updatePreview();
+            showSaveStatus('Content loaded from local storage');
         }
+    }
 
-        function performRedo() {
-            if (redoStack.length > 0) {
-                undoStack.push(redoStack.pop());
-                textarea.value = undoStack[undoStack.length - 1];
-                updatePreview();
-            }
-        }
+    function scheduleAutoSave() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            saveContent();
+            showSaveStatus('Auto-saved');
+        }, 3000);
+    }
 
-        function saveContent() {
-            localStorage.setItem('markdownContent', textarea.value);
-            showSaveStatus('Content saved!');
-        }
+    function showSaveStatus(message) {
+        saveStatus.textContent = message;
+        setTimeout(() => {
+            saveStatus.textContent = '';
+        }, 2000);
+    }
 
-        function loadContent() {
-            const savedContent = localStorage.getItem('markdownContent');
-            if (savedContent) {
-                textarea.value = savedContent;
-                updatePreview();
-                showSaveStatus('Content loaded from local storage');
-            }
-        }
-
-        function scheduleAutoSave() {
-            clearTimeout(autoSaveTimeout);
-            autoSaveTimeout = setTimeout(() => {
-                saveContent();
-                showSaveStatus('Auto-saved');
-            }, 3000);
-        }
-
-        function showSaveStatus(message) {
-            saveStatus.textContent = message;
-            setTimeout(() => {
-                saveStatus.textContent = '';
-            }, 2000);
-        }
-
-        window.onload = loadContent;
-        updatePreview();
+    window.onload = loadContent;
+    updatePreview();
     </script>
 </body>
+
 </html>
